@@ -1,6 +1,7 @@
 package com.example.spring_boot.controller;
 
 import com.example.spring_boot.model.User;
+import com.example.spring_boot.service.UserService;
 import com.example.spring_boot.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,10 +12,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserServiceImpl userService;
+    private final UserService userService;
 
     @Autowired
-    public UserController(UserServiceImpl userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
@@ -39,12 +40,11 @@ public class UserController {
 
     @GetMapping("/{id}/edit")
     public String showEditForm(@PathVariable Long id, Model model) {
-        User user = userService.getUserById(id);
-        model.addAttribute("user", user);
-        model.addAttribute("isEdit", true);
-        return "user-form";
+        model.addAttribute("user", userService.getUserById(id));
+        return "edit-user";
     }
 
+    @PostMapping("/{id}")
     public String updateUser(@PathVariable Long id, @ModelAttribute User user) {
         userService.updateUser(id, user);
         return "redirect:/users";
@@ -52,8 +52,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public String getUserById(@PathVariable Long id, Model model) {
-        User user = userService.getUserById(id);
-        model.addAttribute("user", user);
+        model.addAttribute("user", userService.getUserById(id));
         return "user-details";
     }
 
